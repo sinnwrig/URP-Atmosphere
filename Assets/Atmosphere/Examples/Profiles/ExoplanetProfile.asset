@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3809d83b02c81406f940133c41e93bf5, type: 3}
+  m_Name: ExoplanetProfile
+  m_EditorClassIdentifier: 
+  textureSize: 128
+  opticalDepthCompute: {fileID: 7200000, guid: 9b0dc6063958035b09e19d4bfa8cf7bd, type: 3}
+  opticalDepthPoints: 15
+  inScatteringPoints: 20
+  sunIntensity: 25
+  rayleighScatter:
+    red: 0.10357914
+    green: 0.17244332
+    blue: 0.13492526
+    power: 10
+  rayleighDensityFalloff: 16.2
+  mieScatter:
+    red: 0.25
+    green: 0.119696856
+    blue: 0.13312954
+    power: 1.5
+  mieDensityFalloff: 63.3
+  mieG: 0.979
+  heightAbsorbtion: 0
+  absorbtionColor: {r: 0, g: 0, b: 0, a: 0}
+  ambientColor: {r: 0, g: 0, b: 0, a: 1}
