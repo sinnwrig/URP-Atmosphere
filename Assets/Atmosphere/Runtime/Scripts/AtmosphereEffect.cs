@@ -22,18 +22,20 @@ public class AtmosphereEffect : MonoBehaviour
 	private ComputeShader computeInstance;
 	private RenderTexture opticalDepthTexture;
 
-	// Values to check if optical depth texture is up to date or not. This method is a little unweildy, but works.
+
+	// Values to check if optical depth texture is up to date or not. This method is a little messy but does the job.
 	private int _width, _points;
 	private float _size, _scale, _rayFalloff, _mieFalloff, _hAbsorbtion;
 
 
-	void OnEnable() 
+	private void OnEnable() 
 	{
 		AtmosphereRenderPass.RegisterEffect(this);
 	}
 
 
-	void LateUpdate() 
+	// NOTE : Since Atmosphere shader has no defined properties, values must be updated every frame as they aren't stored in the property sheet.
+	private void LateUpdate() 
 	{
 		if (material == null || sun == null || profile == null) 
 		{
@@ -48,13 +50,15 @@ public class AtmosphereEffect : MonoBehaviour
 
     	if (directional)
       	{	
-			// For directional light
-			material.SetVector("_DirToSun", -sun.forward);
+			// For directional sun
+			material.SetVector("_SunParams", -sun.forward);
+			material.EnableKeyword("DIRECTIONAL_SUN");
   		} 
     	else
       	{
 			// For positional sun
-			material.SetVector("_DirToSun", (sun.position - transform.position).normalized);
+			material.SetVector("_SunParams", sun.position);
+			material.DisableKeyword("DIRECTIONAL_SUN");
   		}
 
 		material.SetFloat("_AtmosphereRadius", AtmosphereSize);
@@ -63,7 +67,7 @@ public class AtmosphereEffect : MonoBehaviour
 	}
 
 
-	void OnDisable() 
+	private void OnDisable() 
 	{
 		AtmosphereRenderPass.RemoveEffect(this);
 
@@ -101,14 +105,16 @@ public class AtmosphereEffect : MonoBehaviour
 			}
 
 			profile.BakeOpticalDepth(ref opticalDepthTexture, computeInstance, planetRadius, AtmosphereSize);
+			
 			_size = planetRadius;
 			_scale = atmosphereScale;
-
-			//Debug.Log($"Rebaked optical depth. Texture Null : {!textureExists}, Settings Changed : {!upToDate}, Size Changed : {sizeChange}");
 		}
 	}
 
- 
+	
+	/// <summary>
+	/// Gets or creates a new material with the provided shader
+	/// </summary>
 	public Material GetMaterial(Shader atmosphereShader) 
 	{
 		if (material == null)
@@ -157,7 +163,7 @@ public class AtmosphereEffect : MonoBehaviour
 	}
 
 
-	void OnDrawGizmosSelected() 
+	private void OnDrawGizmosSelected() 
 	{
 		if (sun != null) 
 		{

@@ -7,47 +7,82 @@ using UnityEngine;
 public class OrbitCamera : MonoBehaviour
 {
     public Transform target;
-    public float distance = 10.0f;
-    public float scrollSpeed = 10.0f;
+    public Vector3 targetOffset;
 
-    public float xSpeed = 250.0f;
-    public float ySpeed = 120.0f;
+    public float distance = 10;
+    public float maxDistance = 20;
+    public float minDistance = .6f;
+    public float xSpeed = 200.0f;
+    public float ySpeed = 200.0f;
+    public int yMinLimit = -80;
+    public int yMaxLimit = 80;
+    public int zoomRate = 40;
+    public float zoomDampening = 5.0f;
 
-    public float yMinLimit = -20;
-    public float yMaxLimit = 80;
+    private float xDeg = 0.0f;
+    private float yDeg = 0.0f;
+    private float currentDistance;
+    private float desiredDistance;
+    private Quaternion currentRotation;
+    private Quaternion desiredRotation;
+    private Quaternion rotation;
+    private Vector3 position;
 
-    float x = 0.0f;
-    float y = 0.0f;
-
-    void Start()
+ 
+    void Start() 
     {
-        var angles = transform.eulerAngles;
-        x = angles.y;
-        y = angles.x;
+        Init(); 
     }
+    
 
-    float prevDistance;
-    void LateUpdate() {
-        distance -= Input.GetAxis("Mouse ScrollWheel") * scrollSpeed;
-        if (target != null && (Input.GetMouseButton(1))) {
-            x += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
-            y -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
-            y = ClampAngle(y, yMinLimit, yMaxLimit);
-            var rotation = Quaternion.Euler(y, x, 0);
-            var position = rotation * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
+    private void Init() 
+    {
+        distance = Vector3.Distance(transform.position, target.position);
+        currentDistance = distance;
+        desiredDistance = distance;
+ 
+        //be sure to grab the current rotations as starting points.
+        position = transform.position;
+        rotation = transform.rotation;
+        currentRotation = transform.rotation;
+        desiredRotation = transform.rotation;
+
+        xDeg = Vector3.Angle(Vector3.right, transform.right);
+        yDeg = Vector3.Angle(Vector3.up, transform.up);
+    }
+ 
+
+    void LateUpdate()
+    {
+        if (Input.GetMouseButton(1) && Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.LeftControl))
+        {
+            desiredDistance -= Input.GetAxis("Mouse Y") * Time.deltaTime * zoomRate * 0.125f * Mathf.Abs(desiredDistance);
+        }
+
+
+        else if (Input.GetMouseButton(1))
+        {
+            xDeg += Input.GetAxis("Mouse X") * xSpeed * 0.02f;
+            yDeg -= Input.GetAxis("Mouse Y") * ySpeed * 0.02f;
+            
+            yDeg = ClampAngle(yDeg, yMinLimit, yMaxLimit);
+
+            desiredRotation = Quaternion.Euler(yDeg, xDeg, 0);
+            currentRotation = transform.rotation;
+ 
+            rotation = Quaternion.Lerp(currentRotation, desiredRotation, Time.deltaTime * zoomDampening);
             transform.rotation = rotation;
-            transform.position = position;
         }
-        if (Mathf.Abs(prevDistance - distance) > 0.001f) {
-            prevDistance = distance;
-            var rot = Quaternion.Euler(y, x, 0);
-            var po = rot * new Vector3(0.0f, 0.0f, -distance) + target.transform.position;
-            transform.rotation = rot;
-            transform.position = po;
-        }
+
+        desiredDistance -= Input.mouseScrollDelta.y * Time.deltaTime * zoomRate * Mathf.Abs(desiredDistance);
+        desiredDistance = Mathf.Clamp(desiredDistance, minDistance, maxDistance);
+        currentDistance = Mathf.Lerp(currentDistance, desiredDistance, Time.deltaTime * zoomDampening);
+
+        position = target.position - (rotation * Vector3.forward * currentDistance + targetOffset);
+        transform.position = position;
     }
 
-    static float ClampAngle(float angle, float min, float max)
+    private static float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360)
             angle += 360;

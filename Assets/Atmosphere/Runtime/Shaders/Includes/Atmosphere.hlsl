@@ -6,13 +6,14 @@
 
 
 #define MAX_LOOP_ITERATIONS 30
+#pragma shader_feature DIRECTIONAL_SUN 
 
 TEXTURE2D(_BakedOpticalDepth);
 float4 _BakedOpticalDepth_TexelSize;
 SAMPLER(sampler_BakedOpticalDepth);
 
 
-float3 _DirToSun;
+float3 _SunParams;
 float3 _PlanetCenter;
 
 // Celestial body radii
@@ -70,7 +71,7 @@ float3 DensityAtPoint(float3 position)
 // Take for example a non-baked fragment sample with 20 steps in the view direction and 10 steps in the sun direction -
 // that's 10*20: 200 marches per pixel, not good due to the frequent use of transcendent functions like exp() and sqrt()
 
-// When baked, this is reduced to only 1 call to OpticalDepthBaked, reducing the marches to only 20 (very performant), while keeping similar visual quality.
+// When baked, this is reduced to only 1 call to OpticalDepthBaked, reducing the iterations to only 20 (very performant), while keeping near identical visual quality.
 
 float3 OpticalDepthBaked(float3 rayOrigin, float3 rayDir) 
 {
@@ -105,12 +106,21 @@ float3 CalculateScattering(float3 start, float3 dir, float sceneDepth, float3 sc
         return sceneColor;
     }
 
+    // Get camera-relative sun direction
+    #if !defined(DIRECTIONAL_SUN)
+        float3 sunPos = _SunParams.xyz - _PlanetCenter;
+        float3 dirToSun = -normalize(start - sunPos.xyz);
+    #else
+        float3 dirToSun = _SunParams.xyz;
+    #endif
+
+
     // Clamp maximum ray length to proper values
     rayLength.y = min(rayLength.y, sceneDepth);
     rayLength.x = max(rayLength.x, 0.0);
 
     // Frequently used values
-    float mu = dot(dir, _DirToSun);
+    float mu = dot(dir, dirToSun);
     float mumu = mu * mu;
     float gg = _MieG * _MieG;
 
@@ -133,7 +143,7 @@ float3 CalculateScattering(float3 start, float3 dir, float sceneDepth, float3 sc
     float3 totalMie = 0;
     float3 opticalDepth = 0;
 
-    // Primary in-scatter loop (added maximum iterations to prevent an infinite loop that bricked my GPU once)
+    // Primary in-scatter loop
     [unroll(MAX_LOOP_ITERATIONS)]
     for (int i = 0; i < _NumInScatteringPoints; i++) 
     {
@@ -143,11 +153,14 @@ float3 CalculateScattering(float3 start, float3 dir, float sceneDepth, float3 sc
         // Accumulate optical depth
         opticalDepth += density;
 
-        // Original optical depth function can be found in OutScattering.compute
-        //float3 lightOpticalDepth = OpticalDepth(pos_i, _DirToSun);
+        // Get sample point relative sun direction
+    #if !defined(DIRECTIONAL_SUN)
+        dirToSun = -normalize(inScatterPoint - sunPos.xyz);
+    #endif
 
-        // Light ray optical depth
-        float3 lightOpticalDepth = OpticalDepthBaked(inScatterPoint, _DirToSun);
+        // Light ray optical depth - Original optical depth function can be found in OutScattering.compute
+        //float3 lightOpticalDepth = OpticalDepth(inScatterPoint, dirToSun);
+        float3 lightOpticalDepth = OpticalDepthBaked(inScatterPoint, dirToSun);
 
         // Attenuation calculation
         float3 attenuation = exp(

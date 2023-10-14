@@ -1,4 +1,4 @@
-{
+﻿{
     "files.exclude":
     {
         "**/.DS_Store":true,
@@ -51,6 +51,5 @@
         "ProjectSettings/":true,
         "temp/":true,
         "Temp/":true
-    },
-    "dotnet.defaultSolution": "Experimental Project.sln"
+    }
 }

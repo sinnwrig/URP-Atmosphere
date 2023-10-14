@@ -12,6 +12,7 @@ Ported to HLSL and Unity's Universal RP.
 
 ### Usage
 
+* Download the complete project repository from GitHub or download only the UnityPackage found in Assets/Atmosphere
 * Add the Atmosphere Render Feature to the current active renderer.
 * Create a new AtmosphereSettings scriptableObject by right-clicking/Create/Atmosphere/Atmosphere Profile.
 * Add an AtmosphereEffect component to an object in your scene.
@@ -22,22 +23,21 @@ There is currently no hard limit on amount of active effects allowed in any give
 
 ### Optional
 
-If the scene is using a URP camera stack with the explicit purpose of increasing view distance/maintianing depth precision:
+If the scene is using a URP camera stack with the explicit purpose of increasing view distance/maintaining depth precision:
 * Add the Depth Stack render feature to your current active renderer.
 * Make sure your overlay camera is set to clear depth.
 * Atmosphere will automatically use the far camera's depth buffer when needed, increasing the effect's render distance.
 
 ### Potential issues/Requirements
-* Not tested with VR/AR
-* Earlier versions of URP have shown issues with the Depth Stack not working properly
+* Not tested with VR/AR.
+* Earlier versions of URP have shown issues with the Depth Stack not working properly.
 * Requires compute shader support on active platform.
-* Tried to pre-bake Optical Depth values into Texture3D's on the CPU- Did not work in shader.
+* Attempts to pre-bake Optical Depth values into Texture3D's on the CPU did not work in shader.
 * Tested on Linux and Windows machines with Unity 2022. Mac, Mobile, and other platforms are untested.
-* Orthographic cameras work- but effect is much more potent visually and settings may require tweaking to prevent scene objects from being washed out
+* Orthographic cameras do not work.
 
 ### Limitations
 * Each active effect supports only one main light. Can be easily modified to use more lights, potentially for multiple suns/moons.
-* Does not suppport having a positional sun for mie glow- If you have a sun model in the scene, the mie glow inside the atmosphere will not correctly represent the position of the object
 
 
 ### Example Scene with Default Earthlike profile

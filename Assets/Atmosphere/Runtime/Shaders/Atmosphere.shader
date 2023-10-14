@@ -1,6 +1,5 @@
 ﻿Shader "Hidden/Atmosphere"
 {
-
 HLSLINCLUDE
 
 #include "/Includes/Common.hlsl"

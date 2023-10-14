@@ -96,7 +96,7 @@ public class AtmosphereProfileEditor : Editor
         GUILayout.BeginHorizontal();
 
         EditorGUIUtility.labelWidth -= 35;
-        property.isExpanded = EditorGUILayout.Toggle("Use Color", property.isExpanded);
+        property.isExpanded = EditorGUILayout.Toggle("Use Color Picker", property.isExpanded);
         EditorGUIUtility.labelWidth += 35;
 
 
