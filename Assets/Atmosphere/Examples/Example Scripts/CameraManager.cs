@@ -24,7 +24,7 @@ public class CameraManager : MonoBehaviour
             trs.controller.SetActive(false);
         }
 
-        SetController(0);
+        SetControllerImmediate(0);
     }
 
 
@@ -36,8 +36,8 @@ public class CameraManager : MonoBehaviour
             return;
         }
 
-        SetController(currentTranstion, cameras[index]);
         currentTranstion = cameras[index];
+        SetController(currentTranstion, cameras[index]);
     }
 
 
@@ -45,6 +45,32 @@ public class CameraManager : MonoBehaviour
     {
         StopAllCoroutines();
         StartCoroutine(ChangeController(from, to));
+    }
+
+
+    public void SetControllerImmediate(int index)
+    {
+        if (index < 0 || index >= cameras.Count)
+        {
+            return;
+        }
+    
+        currentTranstion = cameras[index];
+        SetControllerImmediate(currentTranstion, cameras[index]);
+    }
+
+
+    public void SetControllerImmediate(CameraTransition from, CameraTransition to)
+    {
+        StopAllCoroutines();
+
+        if (from != null) from.controller.SetActive(false);
+
+        managedCamera.transform.SetParent(to.controller.transform, true);
+        managedCamera.transform.rotation = Quaternion.identity;
+        managedCamera.transform.position = Vector3.zero;
+
+        to.controller.SetActive(true);
     }
 
 
@@ -76,10 +102,12 @@ public class CameraManager : MonoBehaviour
 
         Vector3 startPos = from != null && from.controller != null ? from.controller.transform.position : managedCamera.transform.position;
         Vector3 targetPos = to.controller.transform.position;
+
         Quaternion startRot = from != null && from.controller != null ? from.controller.transform.rotation : managedCamera.transform.rotation;
         Quaternion targetRot = to.controller.transform.rotation;
 
         float time = 0.0f;
+
         var lastKeyframe = to.easingCurve[to.easingCurve.length - 1];
         float duration = lastKeyframe.time;
 
