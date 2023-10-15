@@ -7,6 +7,18 @@ public class Readme : ScriptableObject
     public string title;
 
     public Section[] sections;
+    public ReadmeLink[] links;
+
+    public bool isSourceReadme = false;
+
+
+    [Serializable]
+    public class ReadmeLink
+    {
+        public string name;
+        public Readme linkedReadme;
+        public int buttonHeight;
+    }
 
 
     [Serializable]

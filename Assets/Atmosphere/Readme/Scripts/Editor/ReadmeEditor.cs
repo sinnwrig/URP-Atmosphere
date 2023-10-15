@@ -119,6 +119,19 @@ public class ReadmeEditor : Editor
             var readme = (Readme)target;
 
             DrawInspectorGUI(readme);
+            
+            foreach (Readme.ReadmeLink link in readme.links)
+            {
+                if (link.linkedReadme != null)
+                {
+                    if (GUILayout.Button(link.name, GUILayout.MinHeight(link.buttonHeight)))
+                    {
+                        Selection.activeObject = link.linkedReadme;
+                    }
+                }
+            }
+
+            GUILayout.Space(10);
 
             if (GUILayout.Button("Remove Readme Assets", GUILayout.MinHeight(25)))
             {
@@ -205,6 +218,8 @@ public class ReadmeEditor : Editor
                 results.Add((Readme)readmeObject);
             }
 
-            return results[0];
+            Readme root = results.Find((x) => x.isSourceReadme);
+
+            return root ?? results[0];
         }
 }

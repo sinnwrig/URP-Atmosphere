@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class CameraManager : MonoBehaviour
 {
@@ -14,17 +16,25 @@ public class CameraManager : MonoBehaviour
 
     public Transform managedCamera;
     public List<CameraTransition> cameras;
+    public Dropdown cameraDropdown;
+
     CameraTransition currentTranstion;
 
 
     public void Awake()
     {
+        cameraDropdown.ClearOptions();
+
+
         foreach (CameraTransition trs in cameras)
         {
+            cameraDropdown.options.Add(new Dropdown.OptionData(trs.name));
             trs.controller.SetActive(false);
         }
 
         SetControllerImmediate(0);
+
+        cameraDropdown.onValueChanged.AddListener((val) => SetController(val));
     }
 
 
@@ -36,8 +46,8 @@ public class CameraManager : MonoBehaviour
             return;
         }
 
-        currentTranstion = cameras[index];
         SetController(currentTranstion, cameras[index]);
+        currentTranstion = cameras[index];
     }
 
 
@@ -55,8 +65,8 @@ public class CameraManager : MonoBehaviour
             return;
         }
     
-        currentTranstion = cameras[index];
         SetControllerImmediate(currentTranstion, cameras[index]);
+        currentTranstion = cameras[index];
     }
 
 
@@ -66,9 +76,9 @@ public class CameraManager : MonoBehaviour
 
         if (from != null) from.controller.SetActive(false);
 
-        managedCamera.transform.SetParent(to.controller.transform, true);
-        managedCamera.transform.rotation = Quaternion.identity;
-        managedCamera.transform.position = Vector3.zero;
+        managedCamera.transform.SetParent(to.controller.transform, false);
+        managedCamera.transform.localRotation = Quaternion.identity;
+        managedCamera.transform.localPosition = Vector3.zero;
 
         to.controller.SetActive(true);
     }
@@ -93,17 +103,15 @@ public class CameraManager : MonoBehaviour
 
     public IEnumerator ChangeController(CameraTransition from, CameraTransition to)
     {
-
-        Debug.Log("Changing controller");
         managedCamera.transform.SetParent(null, true);
 
         if (from != null) from.controller.SetActive(false);
         to.controller.SetActive(false);
 
-        Vector3 startPos = from != null && from.controller != null ? from.controller.transform.position : managedCamera.transform.position;
+        Vector3 startPos = managedCamera.transform.position;
         Vector3 targetPos = to.controller.transform.position;
 
-        Quaternion startRot = from != null && from.controller != null ? from.controller.transform.rotation : managedCamera.transform.rotation;
+        Quaternion startRot = managedCamera.transform.rotation;
         Quaternion targetRot = to.controller.transform.rotation;
 
         float time = 0.0f;

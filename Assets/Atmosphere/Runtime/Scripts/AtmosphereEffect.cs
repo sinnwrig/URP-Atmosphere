@@ -12,7 +12,7 @@ public class AtmosphereEffect : MonoBehaviour
 	public bool directional = true;
 
 	[Min(1f)] public float planetRadius = 1000.0f;
-	[Min(1f)] public float oceanRadius = 950.0f;
+	[Min(1f)] public float cutoffDepth = 50.0f;
 	[Min(0.025f)] public float atmosphereScale = 0.25f;
 
 	public float AtmosphereSize => (1 + atmosphereScale) * planetRadius;
@@ -63,7 +63,7 @@ public class AtmosphereEffect : MonoBehaviour
 
 		material.SetFloat("_AtmosphereRadius", AtmosphereSize);
 		material.SetFloat("_PlanetRadius", planetRadius);
-		material.SetFloat("_OceanRadius", oceanRadius);
+		material.SetFloat("_CutoffRadius", planetRadius - cutoffDepth);
 	}
 
 

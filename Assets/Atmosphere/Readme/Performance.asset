@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcf7219bab7fe46a1ad266029b2fee19, type: 3}
+  m_Name: Performance
+  m_EditorClassIdentifier: 
+  icon: {fileID: 2800000, guid: d65d8d1a0d64979c3a236ef2f1333349, type: 3}
+  title: Performance Considerations
+  sections:
+  - name: Header -Effect Co...
+    heading: Effect Complexity
+    text: Depending on the amount of effects present on screen at any given time
+      and the effect settings, Atmospheres may take up a considerable amount of rendering
+      time and memory. Each active Atmosphere Effect has to manage an internal texture
+      for baking, which while not overly big, can build up if multiple effects are
+      being used. The effect also makes use of compute shaders, loops and transcendential
+      math functions in shaders, so make sure to check platform support and take
+      it into consideration on lower-end hardware.
+    linkText: 
+    url: 
+  - name: Header -Optimizin...
+    heading: Optimizing Atmospheres
+    text: 'If atmospheres are heavily impacting your performance, a few steps can
+      be taken to reduce the amount of resources they use.
+
+
+      By minimizing
+      the amount of Atmosphere Effects <i>visible</i> at any given time, performance
+      can be improved.
+
+
+      The more expensive settings in the Atmosphere Profile
+      can also be tweaked to improve performance.
+
+      Reducing the InScatterPoints
+      value will have the most drastic effect on rendering times but will impact
+      visual quality and banding.
+
+      Reducing TextureSize and OpticalDepthPoints
+      will improve memory usage and baking time on startup.
+
+      Using a Directional
+      sun in the Atmosphere Effect will also reduce the amount of computations the
+      shader will have to do.'
+    linkText: 
+    url: 
+  links:
+  - name: Quickstart Guide
+    linkedReadme: {fileID: 11400000, guid: 83c2ed844a8c74b779a4c823d16594b1, type: 2}
+    buttonHeight: 25
+  isSourceReadme: 0

@@ -6,7 +6,6 @@ using UnityEditor;
 
 
 #if UNITY_EDITOR
-using System.Reflection;
 using UnityEditor.SceneManagement;
 #endif
 
@@ -59,6 +58,7 @@ public class AtmosphereRenderPass : ScriptableRenderPass
         cameraPlanes = GeometryUtility.CalculateFrustumPlanes(camera);
 
         Vector3 viewPos = camera.transform.position;
+
         for (int i = currentActiveEffects.Count - 1; i >= 0; i--) 
         {
             if (currentActiveEffects[i] == null) 
@@ -70,7 +70,7 @@ public class AtmosphereRenderPass : ScriptableRenderPass
             if (currentActiveEffects[i].IsVisible(cameraPlanes)) 
             {
                 float dstToSurface = currentActiveEffects[i].DistToAtmosphere(viewPos);
-
+            
                 visibleEffects.Add(new SortedEffect { 
                     effect = currentActiveEffects[i],
                     distanceToEffect = dstToSurface
@@ -79,6 +79,7 @@ public class AtmosphereRenderPass : ScriptableRenderPass
         }
 
         // Sort effects from far to near
+        // TODO: Stick this sorter in the loop above. Every time a visible effect is added it can be placed in the correct position, saving time.
 		for (int i = 0; i < visibleEffects.Count - 1; i++) 
         {
 			for (int j = i + 1; j > 0; j--) 

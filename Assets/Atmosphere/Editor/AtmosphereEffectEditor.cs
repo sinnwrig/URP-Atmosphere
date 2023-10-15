@@ -11,7 +11,7 @@ public class AtmosphereEffectEditor : Editor
     SerializedProperty sun;
     SerializedProperty directional;
     SerializedProperty planetRadius;
-    SerializedProperty oceanRadius;
+    SerializedProperty cutoffDepth;
     SerializedProperty atmosphereScale;
 
 
@@ -21,7 +21,7 @@ public class AtmosphereEffectEditor : Editor
         sun = serializedObject.FindProperty("sun");
         directional = serializedObject.FindProperty("directional");
         planetRadius = serializedObject.FindProperty("planetRadius");
-        oceanRadius = serializedObject.FindProperty("oceanRadius");
+        cutoffDepth = serializedObject.FindProperty("cutoffDepth");
         atmosphereScale = serializedObject.FindProperty("atmosphereScale");
     }
 
@@ -40,7 +40,7 @@ public class AtmosphereEffectEditor : Editor
         EditorGUILayout.LabelField(new GUIContent("Sun", "The main light that affects the atmosphere."), GUILayout.Width(110));
         EditorGUILayout.PropertyField(sun, GUIContent.none);
 
-        TightLabel("Directional", "Use the Sun's forward direction instead of the direction from the planet to the Sun's transform?");
+        TightLabel("Directional", "How the atmosphere should treat light direction. If Directional is enabled, atmosphere will treat light direction as applying evenly everywhere. Otherwise, shader will calculate light direction based on direction to sun transform.");
         EditorGUILayout.PropertyField(directional, GUIContent.none, GUILayout.Width(15));
 
         GUILayout.EndHorizontal();
@@ -49,9 +49,9 @@ public class AtmosphereEffectEditor : Editor
 
         EditorGUIUtility.labelWidth = 110;
 
-        EditorGUILayout.PropertyField(planetRadius, new GUIContent("Planet Radius", "The main light that affects the atmosphere."));
-        EditorGUILayout.PropertyField(oceanRadius, new GUIContent("Ocean Radius", "The main light that affects the atmosphere."));
-        EditorGUILayout.PropertyField(atmosphereScale, new GUIContent("Atmosphere Scale", "The scale of the planet aatmosphere relative to the planet radius"));
+        EditorGUILayout.PropertyField(planetRadius, new GUIContent("Planet Radius", "The radius of the planet the atmosphere renders above."));
+        EditorGUILayout.PropertyField(cutoffDepth, new GUIContent("Cutoff Depth", "The depth below the Planet Radius in which the atmosphere will no longer render. Change this value to prevent flickering or infinitely bright objects at the planet center"));
+        EditorGUILayout.PropertyField(atmosphereScale, new GUIContent("Atmosphere Scale", "The scale of the planet atmosphere relative to the planet radius"));
 
         EditorGUIUtility.labelWidth = prevWidth;
 
@@ -91,7 +91,7 @@ public class AtmosphereEffectEditor : Editor
             float newPlanet = Handles.RadiusHandle(Quaternion.identity, effect.transform.position, effect.planetRadius);
 
             Handles.color = Color.red;
-            float newOcean = Handles.RadiusHandle(Quaternion.identity, effect.transform.position, effect.oceanRadius);
+            float newCutoff = Handles.RadiusHandle(Quaternion.identity, effect.transform.position, -effect.cutoffDepth + effect.planetRadius);
 
             Handles.color = Color.blue;
 		    float newAtmo = Handles.RadiusHandle(Quaternion.identity, effect.transform.position, effect.AtmosphereSize);
@@ -103,7 +103,7 @@ public class AtmosphereEffectEditor : Editor
 
                 effect.atmosphereScale = (newAtmo / effect.planetRadius) - 1;
                 effect.planetRadius = newPlanet;
-                effect.oceanRadius = newOcean;
+                effect.cutoffDepth = -(newCutoff - effect.planetRadius);
             }
         }
     }

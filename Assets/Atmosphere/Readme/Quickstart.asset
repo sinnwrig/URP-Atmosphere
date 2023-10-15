@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcf7219bab7fe46a1ad266029b2fee19, type: 3}
+  m_Name: Quickstart
+  m_EditorClassIdentifier: 
+  icon: {fileID: 2800000, guid: d65d8d1a0d64979c3a236ef2f1333349, type: 3}
+  title: Volumetric Atmospheres for URP - Quick Start
+  sections:
+  - name: Header -Initial R...
+    heading: Initial Renderer Feature Setup
+    text: "To begin adding Atmospheric Volumes to your scenes, add the AtmosphereRenderFeature
+      to the currently active URP renderer(s). \n\n If errors regarding missing shaders/materials
+      appear, they should only appear once and can be cleared."
+    linkText: 
+    url: 
+  - name: Header -Creating ...
+    heading: Creating an Atmosphere Profile
+    text: "To create an atmosphere profile, right click in your project folder and
+      select \xBBCreate/Atmosphere/Atmosphere Profile. The profile's default settings
+      should work out of the box. If not, some tweaking may be required depending
+      on scene parameters and performance considerations."
+    linkText: 
+    url: 
+  - name: Header -Adding an...
+    heading: Adding an Atmosphere to the scene
+    text: 'To render atmospheres in your scene, add the Atmosphere Effect component
+      to a GameObject in your scene.
+
+      Assign the previously created atmosphere
+      profile or any other profile in the Assets folder.
+
+      Assign a transform
+      to act as a sun in the ''Sun'' field.
+
+      Toggle ''Directional'' on or off
+      depending on whether or not the sun is infinitely far away such as with a skybox,
+      or if it is a physical object in your scene.
+
+      Set the Planet Radius and
+      Cutoff Depth values to match the radius of the planet.
+
+      If there is an
+      Atmosphere Render Feature on the active renderer, the effect should display
+      on any cameras with Post Processing enabled. This includes the scene camera.'
+    linkText: 
+    url: 
+  links:
+  - name: Troubleshooting
+    linkedReadme: {fileID: 11400000, guid: 4314b422ef19196c7891d354bb34ac6c, type: 2}
+    buttonHeight: 25
+  - name: Performance Considerations
+    linkedReadme: {fileID: 11400000, guid: 16323150f78716b9180af7cc5a6c829a, type: 2}
+    buttonHeight: 25
+  isSourceReadme: 1

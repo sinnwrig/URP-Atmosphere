@@ -1,6 +1,6 @@
 # Atmospheric Scattering For Unity's Universal RP
 
-Open Source (MIT) implementation of an atmospheric scattering example I found here : https://www.shadertoy.com/view/wlBXWK.
+Open Source (MIT) implementation of an atmospheric scattering shadertoy : https://www.shadertoy.com/view/wlBXWK.
 
 Ported to HLSL and Unity's Universal RP.
 
@@ -37,7 +37,7 @@ If the scene is using a URP camera stack with the explicit purpose of increasing
 * Orthographic cameras do not work.
 
 ### Limitations
-* Each active effect supports only one main light. Can be easily modified to use more lights, potentially for multiple suns/moons.
+* Each active effect supports only one main light. Can be modified to use more lights, potentially for multiple suns/moons.
 
 
 ### Example Scene with Default Earthlike profile

@@ -21,7 +21,7 @@ public class AtmosphereRenderFeature : ScriptableRendererFeature
         atmospherePass = new AtmosphereRenderPass(atmosphereShader);
 
         // Effect does not work with transparents since they do not write to the depth buffer. Sorry if you wanted to have a planet made of glass.
-        atmospherePass.renderPassEvent = RenderPassEvent.BeforeRenderingTransparents;
+        atmospherePass.renderPassEvent = RenderPassEvent.AfterRenderingSkybox;//RenderPassEvent.BeforeRenderingTransparents;
 
         atmospherePass.ConfigureInput(ScriptableRenderPassInput.Depth);
     }

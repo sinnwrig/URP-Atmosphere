@@ -19,7 +19,7 @@ float3 _PlanetCenter;
 // Celestial body radii
 float _PlanetRadius;
 float _AtmosphereRadius;
-float _OceanRadius;
+float _CutoffRadius;
 
 // Scttering steps
 int _NumInScatteringPoints;
@@ -94,8 +94,8 @@ float3 CalculateScattering(float3 start, float3 dir, float sceneDepth, float3 sc
     // add an offset to the camera position, so that the atmosphere is in the correct position
     start -= _PlanetCenter;
 
-    float2 oceanHit = RaySphere(0, _OceanRadius, start, dir);
-    sceneDepth = min(sceneDepth, oceanHit.x);
+    float2 cutoffHit = RaySphere(0, _CutoffRadius, start, dir);
+    sceneDepth = min(sceneDepth, cutoffHit.x);
 
     float2 rayLength = RaySphere(0, _AtmosphereRadius, start, dir);
     rayLength.y = min(rayLength.x + rayLength.y, sceneDepth);
