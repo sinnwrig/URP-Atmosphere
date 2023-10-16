@@ -74,16 +74,20 @@ float CompositeDepthScaled(float2 uv, float viewLength, out bool isEndOfDepth)
 
 	isEndOfDepth = rawDepth <= 0.0;
 
+	float depth = 0.0;
+
 	if (_RenderOverlay == 1 && isEndOfDepth) {
 		// If rendering an overlay and end of depth is reached:
 		float4 encInfo = SamplePrevDepth(uv);
 
 		isEndOfDepth = encInfo.x <= 0.0;
 
-		return LinearEyeDepth(encInfo.x, encInfo) * encInfo.y;
+		depth = LinearEyeDepth(encInfo.x, encInfo) * encInfo.y;
 	}
 
-	return LinearEyeDepth(rawDepth, _ZBufferParams) * viewLength;
+	depth = LinearEyeDepth(rawDepth, _ZBufferParams) * viewLength;
+
+	return depth;
 }
 
 #endif

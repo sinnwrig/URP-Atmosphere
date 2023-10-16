@@ -8,6 +8,7 @@
 #define MAX_LOOP_ITERATIONS 30
 #pragma shader_feature DIRECTIONAL_SUN 
 
+
 TEXTURE2D(_BakedOpticalDepth);
 float4 _BakedOpticalDepth_TexelSize;
 SAMPLER(sampler_BakedOpticalDepth);
@@ -71,7 +72,7 @@ float3 DensityAtPoint(float3 position)
 // Take for example a non-baked fragment sample with 20 steps in the view direction and 10 steps in the sun direction -
 // that's 10*20: 200 marches per pixel, not good due to the frequent use of transcendent functions like exp() and sqrt()
 
-// When baked, this is reduced to only 1 call to OpticalDepthBaked, reducing the iterations to only 20 (very performant), while keeping near identical visual quality.
+// When baked, this is reduced to only 1 call to OpticalDepthBaked, reducing the iterations to only 20, while keeping near identical visual quality.
 
 float3 OpticalDepthBaked(float3 rayOrigin, float3 rayDir) 
 {
@@ -84,7 +85,7 @@ float3 OpticalDepthBaked(float3 rayOrigin, float3 rayDir)
 
 	float uvX = 1 - (dot(normal, rayDir) * 0.5 + 0.5);
 
-	return SAMPLE_TEXTURE2D(_BakedOpticalDepth, sampler_BakedOpticalDepth, float2(uvX, height01));
+	return SAMPLE_TEXTURE2D(_BakedOpticalDepth, sampler_BakedOpticalDepth, float2(uvX, height01)).xyz;
 }
 
 
@@ -128,7 +129,7 @@ float3 CalculateScattering(float3 start, float3 dir, float sceneDepth, float3 sc
     float phaseRay = 3.0 / (50.2654824574) * (1.0 + mumu);
 
     // Magic number is (pi * 8)
-    float phaseMie = 3.0 / (25.1327412287) * ((1.0 - gg) * (mumu + 1.0)) / (pow(1.0 + gg - 2.0 * mu * _MieG, 1.5) * (2.0 + gg));
+    float phaseMie = 3.0 / (25.1327412287) * ((1.0 - gg) * (mumu + 1.0)) / (pow(abs(1.0 + gg - 2.0 * mu * _MieG), 1.5) * (2.0 + gg));
 
     // Does object block mie glow?
     phaseMie = sceneDepth > rayLength.y ? phaseMie : 0.0;
