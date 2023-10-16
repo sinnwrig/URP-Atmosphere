@@ -111,11 +111,8 @@ public class AtmosphereEffect : MonoBehaviour
 		}
 	}
 
-	
-	/// <summary>
-	/// Gets or creates a new material with the provided shader
-	/// </summary>
-	public Material GetMaterial(Shader atmosphereShader) 
+
+	internal Material GetMaterial(Shader atmosphereShader) 
 	{
 		if (material == null)
 		{
@@ -127,7 +124,7 @@ public class AtmosphereEffect : MonoBehaviour
 
 
 	/// <summary>
-	/// Is the effect visible to the provided camer frustum planes?
+	/// Is the effect sphere visible to the provided camera frustum planes?
 	/// </summary>
 	public bool IsVisible(Plane[] cameraPlanes) 
 	{
@@ -155,11 +152,11 @@ public class AtmosphereEffect : MonoBehaviour
 
 
 	/// <summary>
-	/// Returns absolute distance from point to atmosphere shell
+	/// Returns signed distance from position to atmosphere shell
 	/// </summary>
 	public float DistToAtmosphere(Vector3 pos) 
 	{
-		return Math.Abs((pos - transform.position).magnitude - AtmosphereSize);
+		return (pos - transform.position).magnitude - AtmosphereSize;
 	}
 
 

@@ -44,7 +44,7 @@ MonoBehaviour:
       value will have the most drastic effect on rendering times but will impact
       visual quality and banding.
 
-      Reducing TextureSize and OpticalDepthPoints
+      Reducing LUTSize and OpticalDepthPoints
       will improve memory usage and baking time on startup.
 
       Using a Directional

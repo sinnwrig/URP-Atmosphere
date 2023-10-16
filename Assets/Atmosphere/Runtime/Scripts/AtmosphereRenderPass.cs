@@ -136,7 +136,7 @@ public class AtmosphereRenderPass : ScriptableRenderPass
     }
 
 
-    void RenderEffects(CommandBuffer cmd, RenderTargetIdentifier colorSource, bool inPrefabMode) 
+    private void RenderEffects(CommandBuffer cmd, RenderTargetIdentifier colorSource, bool inPrefabMode) 
     {
         BlitUtility.BeginBlitLoop(cmd, colorSource);
 

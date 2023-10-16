@@ -30,7 +30,7 @@ public class AtmosphereProfile : ScriptableObject
 	}
 
 
-	public TextureSizes textureSize = TextureSizes._256;
+	public TextureSizes LUTSize = TextureSizes._256;
 	[SerializeField] private ComputeShader opticalDepthCompute; 
 	[Range(1, 30)] public int opticalDepthPoints = 15;
 
@@ -58,7 +58,7 @@ public class AtmosphereProfile : ScriptableObject
 
 
 
-	public void SetProperties(Material material) 
+	internal void SetProperties(Material material) 
 	{
 		material.SetInteger("_NumInScatteringPoints", inScatteringPoints);
 		material.SetInteger("_NumOpticalDepthPoints", opticalDepthPoints);
@@ -81,7 +81,7 @@ public class AtmosphereProfile : ScriptableObject
 
 	private void SetComputeProperties(ComputeShader shader, float planetRadius, float atmosphereRadius)
 	{
-		shader.SetInt("_TextureSize", (int)textureSize);
+		shader.SetInt("_TextureSize", (int)LUTSize);
 		shader.SetInt("_NumOutScatteringSteps", opticalDepthPoints);
 
 		shader.SetFloat("_PlanetRadius", planetRadius); 
@@ -93,15 +93,15 @@ public class AtmosphereProfile : ScriptableObject
 	}
 
 
-	public bool IsUpToDate(ref int textureSize, ref int opticalPoints, ref float rayleighFalloff, ref float mieFalloff, ref float absorbtion) 
+	internal bool IsUpToDate(ref int LUTSize, ref int opticalPoints, ref float rayleighFalloff, ref float mieFalloff, ref float absorbtion) 
 	{
-		bool upToDate = (int)this.textureSize == textureSize && 
+		bool upToDate = (int)this.LUTSize == LUTSize && 
 			opticalDepthPoints == opticalPoints && 
 			rayleighDensityFalloff == rayleighFalloff && 
 			mieDensityFalloff == mieFalloff && 
 			heightAbsorbtion == absorbtion;
 
-		textureSize = (int)this.textureSize;
+		LUTSize = (int)this.LUTSize;
 		opticalPoints = opticalDepthPoints;
 		rayleighFalloff = rayleighDensityFalloff;
 		mieFalloff = mieDensityFalloff;
@@ -111,7 +111,7 @@ public class AtmosphereProfile : ScriptableObject
 	}
 
 
-	public void BakeOpticalDepth(ref RenderTexture opticalDepthTexture, ComputeShader shader, float planetRadius, float atmosphereRadius) 
+	internal void BakeOpticalDepth(ref RenderTexture opticalDepthTexture, ComputeShader shader, float planetRadius, float atmosphereRadius) 
 	{ 
 		if (shader == null) 
 		{
@@ -120,7 +120,7 @@ public class AtmosphereProfile : ScriptableObject
 
 		if (opticalDepthTexture == null || !opticalDepthTexture.IsCreated()) 
 		{
-			CreateRenderTexture(ref opticalDepthTexture, (int)textureSize, (int)textureSize, FilterMode.Bilinear, RenderTextureFormat.ARGBHalf);	
+			CreateRenderTexture(ref opticalDepthTexture, (int)LUTSize, (int)LUTSize, FilterMode.Bilinear, RenderTextureFormat.ARGBHalf);	
 
 			shader.SetTexture(0, "_Result", opticalDepthTexture);
 
@@ -128,14 +128,14 @@ public class AtmosphereProfile : ScriptableObject
 
 			shader.GetKernelThreadGroupSizes(0, out uint x, out uint y, out _);
 
-			int numGroupsX = Mathf.CeilToInt((int)textureSize / (float)x);
-			int numGroupsY = Mathf.CeilToInt((int)textureSize / (float)y);
+			int numGroupsX = Mathf.CeilToInt((int)LUTSize / (float)x);
+			int numGroupsY = Mathf.CeilToInt((int)LUTSize / (float)y);
 			shader.Dispatch(0, numGroupsX, numGroupsY, 1);
 		}
 	}
 
 
-	static void CreateRenderTexture(ref RenderTexture texture, int width, int height, FilterMode filterMode = FilterMode.Bilinear, RenderTextureFormat format = RenderTextureFormat.ARGB32) 
+	private static void CreateRenderTexture(ref RenderTexture texture, int width, int height, FilterMode filterMode = FilterMode.Bilinear, RenderTextureFormat format = RenderTextureFormat.ARGB32) 
 	{
 		if (texture == null || !texture.IsCreated() || texture.width != width || texture.height != height || texture.format != format) 
 		{

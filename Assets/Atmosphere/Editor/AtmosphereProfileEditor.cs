@@ -5,7 +5,7 @@ using UnityEditor;
 [CustomEditor(typeof(AtmosphereProfile))]
 public class AtmosphereProfileEditor : Editor
 {
-    SerializedProperty textureSize;
+    SerializedProperty LUTSize;
     SerializedProperty opticalDepthCompute;
     SerializedProperty opticalDepthPoints;
     SerializedProperty inScatteringPoints;
@@ -22,7 +22,7 @@ public class AtmosphereProfileEditor : Editor
 
     void OnEnable()
     {
-        textureSize = serializedObject.FindProperty("textureSize");
+        LUTSize = serializedObject.FindProperty("LUTSize");
         opticalDepthCompute = serializedObject.FindProperty("opticalDepthCompute");
         opticalDepthPoints = serializedObject.FindProperty("opticalDepthPoints");
 
@@ -48,7 +48,7 @@ public class AtmosphereProfileEditor : Editor
 
         GUILayout.BeginVertical("GroupBox");
         EditorGUILayout.LabelField("Optical Depth Baking", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(textureSize);
+        EditorGUILayout.PropertyField(LUTSize);
         EditorGUILayout.PropertyField(opticalDepthCompute);
         EditorGUILayout.PropertyField(opticalDepthPoints);
         GUILayout.EndVertical();
@@ -83,6 +83,7 @@ public class AtmosphereProfileEditor : Editor
     }
 
 
+    // Fudge factor to make the wavelength values look right as colors in the inspector.
     const float colorFactor = 0.25f;
 
 

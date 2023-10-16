@@ -209,7 +209,7 @@ public class ReadmeEditor : Editor
 
         static Readme GetReadmeRoot()
         {
-            var ids = AssetDatabase.FindAssets("Readme t:Readme");
+            var ids = AssetDatabase.FindAssets("t:Readme");
             List<Readme> results = new List<Readme>();
 
             foreach (string guid in ids)
@@ -220,6 +220,16 @@ public class ReadmeEditor : Editor
 
             Readme root = results.Find((x) => x.isSourceReadme);
 
-            return root ?? results[0];
+            if (root != null)
+            {
+                return root;
+            }
+
+            if (results.Count > 0)
+            {
+                return results[0];
+            }
+
+            return null;
         }
 }

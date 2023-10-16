@@ -37,7 +37,7 @@ public class AtmosphereRenderFeature : ScriptableRendererFeature
     }
 
 
-    void ValidateShader() 
+    private void ValidateShader() 
     {
         Shader shader = AddAlwaysIncludedShader("Hidden/Atmosphere");
 
@@ -51,7 +51,7 @@ public class AtmosphereRenderFeature : ScriptableRendererFeature
     }
 
 
-    // NOTE: Does not always immediately add the shader. If the shader was just recently imported with the project, will return null as the shader hasn't compiled yet
+    // NOTE: Does not always immediately add the shader. If the shader was just recently imported with the project, may return null if the asset isn't loaded and compiled.
     public static Shader AddAlwaysIncludedShader(string shaderName)
     {
         var shader = Shader.Find(shaderName);
