@@ -14,6 +14,7 @@ TEXTURE2D(_PrevCameraDepth);
 SAMPLER(sampler_PrevCameraDepth);
 
 int _RenderOverlay;
+float4 _PrevZBuffer;
 
 // Normal, raw depth.
 float SampleDepth(float2 uv)
@@ -29,14 +30,17 @@ float4 SamplePrevDepth(float2 uv)
 
 
 // Composite depth sample- If the current depth sample goes past the depth buffer's bounds, the secondary depth buffer is sampled insted
-float4 SampleCompositeDepth(float2 uv) {
+float4 SampleCompositeDepth(float2 uv) 
+{
 	float rawDepth = SampleDepth(uv);
 	float4 compositeDepth = 0;
 
-	if (_RenderOverlay == 1 && rawDepth <= 0.0) {
+	if (_RenderOverlay == 1 && rawDepth <= 0.0) 
+	{
 		// If rendering an overlay and end of depth is reached:
 		compositeDepth = SamplePrevDepth(uv);
-	} else {
+	} else 
+	{
 		// Normal scene depth
 		compositeDepth.x = rawDepth;
 		compositeDepth.y = 0;
@@ -68,24 +72,19 @@ float CompositeDepthEye(float2 uv)
 }
 
 // Linear depth scaled by camera view ray distance- useful for finding world position of a fragment or for ray-marching 
-float CompositeDepthScaled(float2 uv, float viewLength, out bool isEndOfDepth) 
+float CompositeDepthScaled(float2 uv, float viewLength) 
 {
 	float rawDepth = SampleDepth(uv);
 
-	isEndOfDepth = rawDepth <= 0.0;
+	float depth = LinearEyeDepth(rawDepth, _ZBufferParams) * viewLength;
 
-	float depth = 0.0;
-
-	if (_RenderOverlay == 1 && isEndOfDepth) {
+	if (_RenderOverlay == 1 && rawDepth <= 0.0) 
+	{
 		// If rendering an overlay and end of depth is reached:
 		float4 encInfo = SamplePrevDepth(uv);
 
-		isEndOfDepth = encInfo.x <= 0.0;
-
-		depth = LinearEyeDepth(encInfo.x, encInfo) * encInfo.y;
+		return LinearEyeDepth(encInfo.x, _PrevZBuffer) * encInfo.y;
 	}
-
-	depth = LinearEyeDepth(rawDepth, _ZBufferParams) * viewLength;
 
 	return depth;
 }

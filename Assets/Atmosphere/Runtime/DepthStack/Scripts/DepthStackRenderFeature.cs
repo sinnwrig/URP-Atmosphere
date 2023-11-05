@@ -21,7 +21,7 @@ public class DepthStackRenderFeature : ScriptableRendererFeature
         ValidateDepthMaterial();
 
         cameraRenderPass = new DepthStackRenderPass(copyDepth);
-        cameraRenderPass.renderPassEvent = RenderPassEvent.AfterRendering;
+        cameraRenderPass.renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
         cameraRenderPass.ConfigureInput(ScriptableRenderPassInput.Depth);
     }
 

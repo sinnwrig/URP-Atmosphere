@@ -64,8 +64,7 @@ ENDHLSL
 
 				float viewLength = length(i.viewVector);
 
-				bool isEndOfDepth;
-				float sceneDepth = CompositeDepthScaled(i.uv, viewLength, isEndOfDepth);
+				float sceneDepth = CompositeDepthScaled(i.uv, viewLength);
 
 				float3 color = CalculateScattering(_WorldSpaceCameraPos.xyz, i.viewVector / viewLength, sceneDepth, originalCol.xyz);
 

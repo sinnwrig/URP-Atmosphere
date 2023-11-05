@@ -6,54 +6,53 @@
 Shader "Hidden/EncodeDepth"
 {
 
-HLSLINCLUDE
+	HLSLINCLUDE
 
-#include "../Includes/CompositeDepth.hlsl"
+	#include "../Includes/CompositeDepth.hlsl"
 
-struct appdata 
-{
-	float4 vertex : POSITION;
-	float4 uv : TEXCOORD0;
-};
-
-
-struct v2f 
-{
-	float4 pos : SV_POSITION;
-	float2 uv : TEXCOORD0;
-	float3 viewVector : TEXCOORD1;
-};
+	struct appdata 
+	{
+		float4 vertex : POSITION;
+		float4 uv : TEXCOORD0;
+	};
 
 
-v2f EncodeDepthVertex(appdata v) 
-{
-	v2f output;
-	output.pos = TransformObjectToHClip(v.vertex.xyz);
-	output.uv = v.uv.xy;
-
-	// Get view vector for fragment shader - do not normalize here as interpolation will mess it up, only normalize in fragment shader
-	float3 viewVector = mul(unity_CameraInvProjection, float4(v.uv.xy * 2 - 1, 0, -1)).xyz;
-	output.viewVector = mul(unity_CameraToWorld, float4(viewVector, 0)).xyz;
-	return output;
-}
+	struct v2f 
+	{
+		float4 pos : SV_POSITION;
+		float2 uv : TEXCOORD0;
+		float3 viewVector : TEXCOORD1;
+	};
 
 
-float4 EncodeDepthFragment(v2f i) : SV_Target 
-{
-    // x: raw depth
-	// y: view length
-	// z-w: z-buffer parameters
-	float4 encodedInfo = (float4)0;
+	v2f EncodeDepthVertex(appdata v) 
+	{
+		v2f output;
+		output.pos = TransformObjectToHClip(v.vertex.xyz);
+		output.uv = v.uv.xy;
 
-	encodedInfo.x = SampleDepth(i.uv);
-	encodedInfo.y = length(i.viewVector);
-	encodedInfo.z = _ZBufferParams.z;
-	encodedInfo.w = _ZBufferParams.w;
+		// Get view vector for fragment shader - do not normalize here as interpolation will mess it up, only normalize in fragment shader
+		float3 viewVector = mul(unity_CameraInvProjection, float4(v.uv.xy * 2 - 1, 0, -1)).xyz;
+		output.viewVector = mul(unity_CameraToWorld, float4(viewVector, 0)).xyz;
+		return output;
+	}
 
-    return encodedInfo;
-}
 
-ENDHLSL
+	float4 EncodeDepthFragment(v2f i) : SV_Target 
+	{
+	    // x: raw depth
+		// y: view length
+		// z-w: z-buffer parameters
+		float4 encodedInfo = (float4)0;
+
+		encodedInfo.x = SampleDepth(i.uv);
+		encodedInfo.y = length(i.viewVector);
+		encodedInfo.zw = _ZBufferParams.zw;
+
+	    return encodedInfo;
+	}
+
+	ENDHLSL
 
     SubShader
     {
